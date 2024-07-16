@@ -6,9 +6,16 @@
 </head>
 <body>
     <div class="container mt-5">
+        <div class="row align-items-end">
+            <div class="col-md-6">
+                <h1>Todo App</h1>
+            </div>
+            <div class="col-md-6 align-bottom text-end">
+                Search: <input id="tableSearch" type="text" />
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
-                <h1>Todo App</h1>
                 <table id="dataTable" class="table table-striped table-hover table-sort table-arrows">
                     <thead>
                         <tr>
@@ -55,7 +62,15 @@
                     });
 
                 }
-            })
+            });
+
+            $("#tableSearch").on("keyup", function() {
+                var searchTerm = $(this).val().toLowerCase();
+                console.log(searchTerm);
+                $("#dataTable tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(searchTerm) > -1);
+                });
+            });
 
         });
     </script>
