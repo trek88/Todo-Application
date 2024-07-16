@@ -33,8 +33,23 @@
     <script>
         $(document).ready(function() {
     
-            // Function to fetch data and populate the table
-            // This can be in a separate file or embedded here
+            $.ajax({
+                url:'https://jsonplaceholder.typicode.com/todos',
+                dataType: 'json',
+                success: function(data){
+
+                    $.each(data, function(key, val) {
+                        newRow = "<tr>\n" +
+                                 "  <td>" + val["id"] + "</td>/n" +
+                                 "  <td>" + val["title"] + "</td>/n" +
+                                 "  <td>" + (val["completed"]?"Yes":"No") + "</td>/n" +
+                                 "</tr>"; 
+                                    
+                        $("#dataTable tbody").append(newRow);
+                    });
+
+                }
+            })
 
         });
     </script>
