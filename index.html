@@ -52,12 +52,12 @@
     <script>
         $(document).ready(function() {
     
-            // Function to fetch data and populate the table
-            // This can be in a separate file or embedded here
-
+            //Global varibles to store the current pagination selection
             var itemsPerPage = 10;
             var currentPage = 1;
 
+
+            // Function to fetch data and populate the table
             $.ajax({
                 url:'https://jsonplaceholder.typicode.com/todos',
                 dataType: 'json',
@@ -99,6 +99,7 @@
                 }
             });
 
+            //Filter/Search Function
             $("#tableSearch").on("keyup", function() {
                 var searchTerm = $(this).val().toLowerCase();
                 console.log(searchTerm);
@@ -107,6 +108,7 @@
                 });
             });
             
+            //Pagination Page Selection Function
             $("#pageItems").on("change", function() {
                 
                 itemsPerPage = Number($(this).val());
@@ -115,6 +117,7 @@
 
             });
 
+            //Function that refreshes the table once the pagination selection has changed
             function refresh_table_page(){
                 
                 var rowCount = 0;
