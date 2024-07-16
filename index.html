@@ -6,11 +6,14 @@
 </head>
 <body>
     <div class="container mt-5">
-        <div class="row align-items-end">
+        <div class="row align-items-center">
             <div class="col-md-6">
                 <h1>Todo App</h1>
             </div>
-            <div class="col-md-6 align-bottom text-end">
+            <div class="col-md-6 text-end">
+                Results Per Page: <select id="pageItems">
+                </select>
+                <br/>
                 Search: <input id="tableSearch" type="text" />
             </div>
         </div>
@@ -28,6 +31,7 @@
                         <!-- Table rows will be dynamically added here -->
                     </tbody>
                 </table>
+                <div id="pageLinks"></div>
             </div>
         </div>
         <div class="row"></div>
@@ -46,19 +50,34 @@
             // Function to fetch data and populate the table
             // This can be in a separate file or embedded here
 
+            var itemsPerPage = 10;
+
             $.ajax({
                 url:'https://jsonplaceholder.typicode.com/todos',
                 dataType: 'json',
                 success: function(data){
+                    
+                    var itemCount = 0;
 
                     $.each(data, function(key, val) {
-                        newRow = "<tr>\n" +
+                        itemCount++; 
+                        newRow = "<tr " + (itemCount>itemsPerPage?'class="d-none"':"") + ">\n" +
                                  "  <td>" + val["id"] + "</td>/n" +
                                  "  <td>" + val["title"] + "</td>/n" +
                                  "  <td>" + (val["completed"]?"Yes":"No") + "</td>/n" +
                                  "</tr>"; 
                                     
                         $("#dataTable tbody").append(newRow);
+
+                        itemOption = "<option " + (itemCount==itemsPerPage?'selected ':"") + ">" +  itemCount + "</option>\n";
+                        $("#pageItems").append(itemOption);
+
+                        if ((itemCount-1) % itemsPerPage == 0) {
+                            pageNumber = (itemCount-1+itemsPerPage)/itemsPerPage;
+                            pageLink = "<a href='#" + pageNumber + "'>" + pageNumber + "</a>";
+                            $("#pageLinks").append(pageLink);
+                        }
+                         
                     });
 
                 }
