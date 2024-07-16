@@ -7,13 +7,16 @@
 <body>
     <div class="container mt-5">
         <div class="row align-items-center">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <h1>Todo App</h1>
             </div>
-            <div class="col-md-6 text-end">
+        </div>
+        <div class="row align-items-center">
+            <div class="col-md-6 text-start">
                 Results Per Page: <select id="pageItems">
                 </select>
-                <br/>
+            </div>
+            <div class="col-md-6 text-end">
                 Search: <input id="tableSearch" type="text" />
             </div>
         </div>
@@ -31,11 +34,13 @@
                         <!-- Table rows will be dynamically added here -->
                     </tbody>
                 </table>
-                <div id="pageLinks"></div>
+                <div id="pagination"></div>
             </div>
         </div>
-        <div class="row"></div>
-            <a href="https://github.com/trek88/Todo-Application">Todo Application Git Repository</a>
+        <div class="row">
+            <p class="text-center">
+                <a href="https://github.com/trek88/Todo-Application">Todo Application Git Repository</a>
+            </p>
         </div>
     </div>
 
@@ -51,11 +56,14 @@
             // This can be in a separate file or embedded here
 
             var itemsPerPage = 10;
+            var currentPage = 1;
 
             $.ajax({
                 url:'https://jsonplaceholder.typicode.com/todos',
                 dataType: 'json',
                 success: function(data){
+
+                    console.log("loaded");
                     
                     var itemCount = 0;
 
@@ -74,10 +82,18 @@
 
                         if ((itemCount-1) % itemsPerPage == 0) {
                             pageNumber = (itemCount-1+itemsPerPage)/itemsPerPage;
-                            pageLink = "<a href='#" + pageNumber + "'>" + pageNumber + "</a>";
-                            $("#pageLinks").append(pageLink);
+                            pageLink = "<a href='#" + pageNumber + "' class='px-1 py-1 " + (pageNumber==currentPage?' bg-primary text-white':'') + "' >" + pageNumber + "</a>";
+                            $("#pagination").append(pageLink);
                         }
                          
+                    });
+            
+                    $("#pagination a").click(function(e) {
+
+                        currentPage = Number($(this).attr("href").replace("#",""));
+                        refresh_table_page();
+                        return false;
+
                     });
 
                 }
@@ -90,6 +106,45 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(searchTerm) > -1);
                 });
             });
+            
+            $("#pageItems").on("change", function() {
+                
+                itemsPerPage = Number($(this).val());
+
+                refresh_table_page();
+
+            });
+
+            function refresh_table_page(){
+                
+                var rowCount = 0;
+                $("#pagination").html("");
+
+                $("#dataTable tbody tr").each(function() {
+
+                    rowCount++;
+                    $(this).not(".d-none").addClass("d-none");
+
+                    if (rowCount > ((currentPage-1)*itemsPerPage) && rowCount <= (((currentPage-1)*itemsPerPage)+itemsPerPage)){
+                        $(this).removeClass("d-none");
+                    }
+
+                    if ((rowCount-1) % itemsPerPage == 0) {
+                        pageNumber = ((rowCount-1)+itemsPerPage)/itemsPerPage;
+                        pageLink = '<a href="#' + pageNumber + '" class="px-1 py-1 ' + (pageNumber==currentPage?' bg-primary text-white':'') + '" >' + pageNumber + '</a>';
+                        $("#pagination").append(pageLink);
+                    }
+                });
+
+                $("#pagination a").click(function(e) {
+
+                    currentPage = Number($(this).attr("href").replace("#",""));
+                    refresh_table_page();
+                    return false;
+
+                });
+
+            }
 
         });
     </script>
